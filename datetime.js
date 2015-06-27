@@ -74,10 +74,6 @@ DateFinder.prototype.findDates = function (elementSelector, outerConfiguration) 
             nodeDateMap[node] = [];
           }
           nodeDateMap[node].push(match);
-          console.log("node");
-          console.log(node);
-          console.log("match");
-          console.log(match);
         }
       }
     }
