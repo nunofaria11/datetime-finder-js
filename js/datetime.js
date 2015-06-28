@@ -38,11 +38,11 @@
     }
   }
 
-  function addToNodeMap(node, match, nodeMap) {
-    if (nodeMap[node] === undefined) {
-      nodeMap[node] = [];
+  function addToNodeMap(node, date, nodeMap) {
+    if (nodeMap[date] === undefined) {
+      nodeMap[date] = [];
     }
-    nodeMap[node].push(match);
+    nodeMap[date].push(node);
   }
 
 
@@ -91,7 +91,7 @@
         var matchedRegex = matchMultipleRegExps(text, regExps);
         if (matchedRegex !== undefined) {
           // is a date
-          matchedText = text.match(matchedRegex);
+          match = text.match(matchedRegex);
           addToNodeMap(node, match, nodeDateMap);
         }
       }

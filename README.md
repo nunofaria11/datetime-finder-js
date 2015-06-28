@@ -14,4 +14,5 @@ TODO:
 - explicit method `findDates` with `text` parameter
 - more tests
 - time regex
-- visibleOnly configuration property
+- `visibleOnly` configuration property
+- highlight only future dates option (`futureOnly`, `ignoreToday`)

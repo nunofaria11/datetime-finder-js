@@ -8,5 +8,5 @@ describe("Date-time finder", function () {
     ];
     expect(matchMultipleRegExps("28-08-1988", expressions)).toEqual(regExp1);
   });
-  // TODO: merge configurations
+  // TODO: merge configurations test
 });
