@@ -16,3 +16,5 @@ TODO:
 - time regex
 - `visibleOnly` configuration property
 - highlight only future dates option (`futureOnly`, `ignoreToday`)
+- add *tranformer* functionality to visitor
+- date validator (method that checks if a string is a date)
