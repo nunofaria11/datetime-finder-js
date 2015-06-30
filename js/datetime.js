@@ -1,17 +1,72 @@
 (function (context, undefined) {
-
-  function validDate(dateValue) {
-
-  }
-
-  function matchMultipleRegExps(text, regExps) {
-    var i, regexp;
-    for (i in regExps) {
-      regexp = regExps[i];
-      if (regexp.test(text)) {
-        return regexp; // return the 1st regexp that matched
-      }
+  /**
+   * Constructor for DateRegexpBuilder
+   * @param {array} separators
+   */
+  function DateRegexpBuilder(separators) {
+    if (separators === undefined) {
+      separators = ["-", "\\/", "\\\s"];
     }
+    this.separators = separators;
+  };
+
+  DateRegexpBuilder.prototype = {
+    /**
+     * Build regexps based on the separators the object currently contains
+     * @return {array} array of regexps
+     */
+    build: function () {
+      var i, separator, regexps = [];
+      for (i in this.separators) {
+        separator = this.separators[i];
+        var expr = "/(\\\d{2,4})" + separator + "(\\\d{2,4})" + separator + "(\\\d{2,4})/";
+        regexps.push(eval(expr));
+      }
+      return regexps;
+    },
+    /**
+     * Adds a separator to the object instance
+     * @param {[type]} separator [description]
+     * @return {DateRegexpBuilder} for chaining
+     */
+    addSeparator: function (separator) {
+      if (this.separators.indexOf(separator) === -1) {
+        this.separators.push(separator);
+      }
+      return this;
+    },
+    /**
+     * Returns the all regular-expression that matched the text
+     * @param  {String} text Text to match
+     * @return {map} map regexp - all matches
+     */
+    match: function (text) {
+      var i, re,
+        regExps = this.build(),
+        map = {};
+      if (regExps !== undefined) {
+        for (i in regExps) {
+          re = regExps[i];
+          if (re.test(text)) {
+            map[re] = text.match(re);
+          }
+        }
+      }
+      return map;
+    }
+  };
+
+  /**
+   * Method to extract a date from a string value
+   * @param  {string} value String value containing date
+   * @return {Date}         returns a date if it can find one; undefined if not
+   */
+  function dateIsValid(value) {
+    var year, month, day,
+      regexBuilder = new DateRegexpBuilder(),
+      matches = regexBuilder.match(value);
+
+    return new Date(year, month, day);
   }
 
   function addToNodeMap(node, date, nodeMap) {
@@ -54,19 +109,10 @@
    * DateFinder constructor
    */
   function DateFinder() {
-    this.dateRegExps = [];
-    var dateSeparators = ["-", "\\/", "\\\s"],
-      separator;
-    // join regexps with multiple separators (-, / and whitespace)
-    for (separator in dateSeparators) {
-      var expr = "/\\\d{2,4}" + dateSeparators[separator] + "\\\d{2,4}" + dateSeparators[separator] + "\\\d{2,4}/";
-      this.dateRegExps.push(eval(expr));
-    }
     this.defaultConfiguration = {
       visibleOnly: true
     };
-  }
-
+  };
   DateFinder.prototype = {
     /**
      * Finds references to dates
@@ -85,7 +131,6 @@
       // get parent element
       var parentNode = document.querySelector(elementSelector),
         nodeDateMap = {},
-        regExps = this.dateRegExps, // closure
         text, match, matchedText;
       // functor for node filter
       var _nodeFilter = function (node) {
@@ -93,11 +138,17 @@
       };
       // functor for node action
       var _nodeFunctor = function (node) {
-          var text = node.textContent;
-          var matchedRegex = matchMultipleRegExps(text, regExps); // regExps closure
-          if (matchedRegex !== undefined) { // is a date
-            var match = text.match(matchedRegex);
-            addToNodeMap(node, match, nodeDateMap);
+          var text = node.textContent,
+            matchedRegexp,
+            matchedRegexps = new DateRegexpBuilder()
+            .build()
+            .match(text);
+          if (matchedRegexps !== undefined && matchedRegexps.length > 0) {
+            matchedRegex = matchedRegexps[0];
+            if (matchedRegex !== undefined) { // is a date
+              var match = text.match(matchedRegex);
+              addToNodeMap(node, match, nodeDateMap);
+            }
           }
         }
         // spawn and run a DomVisitor
@@ -124,7 +175,8 @@
   };
 
   context.DateFinder = DateFinder;
+  context.DateRegexpBuilder = DateRegexpBuilder;
   /* test begin */
-  context.matchMultipleRegExps = matchMultipleRegExps;
+  // ---
   /* test end */
 })(window);
