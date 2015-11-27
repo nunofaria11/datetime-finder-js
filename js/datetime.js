@@ -106,6 +106,21 @@
         }
     };
 
+
+    function highlight(node, match) {
+        var content = node.textContent,
+            startIdx = content.indexOf(match),
+            endIdx = startIdx + match.length;
+        console.log('highlighting node: ', node);
+        var range = document.createRange();
+        range.setStart(node, startIdx);
+        range.setEnd(node, endIdx);
+        range.deleteContents();
+        var newNode = document.createElement("mark"); // todo generic elements
+        newNode.appendChild(document.createTextNode(match));
+        range.insertNode(newNode);
+    }
+
     /**
      * DateFinder constructor
      */
@@ -113,7 +128,8 @@
         this.defaultConfiguration = {
             visibleOnly: true
         };
-    };
+    }
+
     DateFinder.prototype = {
         /**
          * Finds references to dates
@@ -147,13 +163,22 @@
 
                 if (matchedData !== undefined && Object.keys(matchedData).length > 0) {
                     for (match in matchedData) {
-                        addToNodeMap(node, matchedData[match][0], nodeDateMap);
+                        var fullmatch = matchedData[match][0];
+                        addToNodeMap(node, fullmatch, nodeDateMap);
+                        //highlight(node, fullmatch);
                     }
                 }
-            }
+            };
             // spawn and run a DomVisitor
             new DomVisitor(parentNode, _nodeFunctor, _nodeFilter)
                 .visit();
+
+            for (var date in nodeDateMap) {
+                var nodes = nodeDateMap[date];
+                nodes.forEach(function (node) {
+                    highlight(node, date)
+                });
+            }
             return nodeDateMap;
         },
         /**
