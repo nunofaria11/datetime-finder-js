@@ -10,7 +10,8 @@ To test (with karma)
 npm test
 ```
 
-TODO:
+##TODO
 - time regex
 - generic highlighting mechanism (the user can decide which highlighting function to use)
 - refactor code to look more like a lib
+- ignore invalid dates like '111-111-111' or '28-08/1988'
