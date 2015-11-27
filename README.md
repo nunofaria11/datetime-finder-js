@@ -11,11 +11,6 @@ npm test
 ```
 
 TODO:
-- explicit method `findDates` with `text` parameter
-- more tests
 - time regex
-- `visibleOnly` configuration property
-- highlight only future dates option (`futureOnly`, `ignoreToday`)
-- add *tranformer* functionality to visitor
-- date validator (method that checks if a string is a date)
-- testes DateRegexpBuilder
+- generic highlighting mechanism (the user can decide which highlighting function to use)
+- refactor code to look more like a lib
